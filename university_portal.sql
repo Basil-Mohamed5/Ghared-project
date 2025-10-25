@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict Z1xvsS08l6Hmw2hkWMrYK2EJFjzyNGNq3Ltyt12IutTmwfZ6EYXn34coeRqjrWe
+
 
 -- Dumped from database version 18.0
 -- Dumped by pg_dump version 18.0
@@ -31,13 +31,13 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public."Action" (
-    action_id integer NOT NULL,
-    action_name character varying,
-    execution_date date,
-    annotation text,
-    transaction_id integer,
-    performer_user_id integer,
-    target_department_id integer
+ action_id integer NOT NULL,
+ action_name character varying,
+ execution_date date,
+ annotation text,
+ transaction_id integer,
+ performer_user_id integer,
+ target_department_id integer
 );
 
 
@@ -49,12 +49,12 @@ ALTER TABLE public."Action" OWNER TO postgres;
 --
 
 CREATE SEQUENCE public."Action_action_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."Action_action_id_seq" OWNER TO postgres;
@@ -74,13 +74,13 @@ ALTER SEQUENCE public."Action_action_id_seq" OWNED BY public."Action".action_id;
 --
 
 CREATE TABLE public."Attachment" (
-    attachment_id integer NOT NULL,
-    description character varying,
-    file_number character varying,
-    attachment_date date,
-    file_path character varying,
-    publishing_department_id integer,
-    transaction_id integer
+ attachment_id integer NOT NULL,
+ description character varying,
+ file_number character varying,
+ attachment_date date,
+ file_path character varying,
+ publishing_department_id integer,
+ transaction_id integer
 );
 
 
@@ -92,12 +92,12 @@ ALTER TABLE public."Attachment" OWNER TO postgres;
 --
 
 CREATE SEQUENCE public."Attachment_attachment_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."Attachment_attachment_id_seq" OWNER TO postgres;
@@ -117,8 +117,8 @@ ALTER SEQUENCE public."Attachment_attachment_id_seq" OWNED BY public."Attachment
 --
 
 CREATE TABLE public."College" (
-    college_id integer NOT NULL,
-    college_name character varying
+ college_id integer NOT NULL,
+ college_name character varying
 );
 
 
@@ -130,12 +130,12 @@ ALTER TABLE public."College" OWNER TO postgres;
 --
 
 CREATE SEQUENCE public."College_college_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."College_college_id_seq" OWNER TO postgres;
@@ -155,10 +155,10 @@ ALTER SEQUENCE public."College_college_id_seq" OWNED BY public."College".college
 --
 
 CREATE TABLE public."Department" (
-    department_id integer NOT NULL,
-    department_name character varying,
-    college_id integer,
-    department_type character varying
+ department_id integer NOT NULL,
+ department_name character varying,
+ college_id integer,
+ department_type character varying
 );
 
 
@@ -170,9 +170,9 @@ ALTER TABLE public."Department" OWNER TO postgres;
 --
 
 CREATE TABLE public."Department_Role" (
-    dep_role_id integer NOT NULL,
-    department_id integer,
-    role_id integer
+ dep_role_id integer NOT NULL,
+ department_id integer,
+ role_id integer
 );
 
 
@@ -184,12 +184,12 @@ ALTER TABLE public."Department_Role" OWNER TO postgres;
 --
 
 CREATE SEQUENCE public."Department_Role_dep_role_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."Department_Role_dep_role_id_seq" OWNER TO postgres;
@@ -209,12 +209,12 @@ ALTER SEQUENCE public."Department_Role_dep_role_id_seq" OWNED BY public."Departm
 --
 
 CREATE SEQUENCE public."Department_department_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."Department_department_id_seq" OWNER TO postgres;
@@ -234,11 +234,11 @@ ALTER SEQUENCE public."Department_department_id_seq" OWNED BY public."Department
 --
 
 CREATE TABLE public."Draft" (
-    draft_id integer NOT NULL,
-    transaction_id integer,
-    archived_by_user_id integer,
-    archive_date timestamp without time zone,
-    storage_path character varying
+ draft_id integer NOT NULL,
+ transaction_id integer,
+ archived_by_user_id integer,
+ archive_date timestamp without time zone,
+ storage_path character varying
 );
 
 
@@ -250,12 +250,12 @@ ALTER TABLE public."Draft" OWNER TO postgres;
 --
 
 CREATE SEQUENCE public."Draft_draft_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."Draft_draft_id_seq" OWNER TO postgres;
@@ -275,10 +275,10 @@ ALTER SEQUENCE public."Draft_draft_id_seq" OWNED BY public."Draft".draft_id;
 --
 
 CREATE TABLE public."Notification" (
-    notification_id integer NOT NULL,
-    user_id integer,
-    transaction_id integer,
-    is_read boolean
+ notification_id integer NOT NULL,
+ user_id integer,
+ transaction_id integer,
+ is_read boolean
 );
 
 
@@ -290,12 +290,12 @@ ALTER TABLE public."Notification" OWNER TO postgres;
 --
 
 CREATE SEQUENCE public."Notification_notification_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."Notification_notification_id_seq" OWNER TO postgres;
@@ -315,9 +315,9 @@ ALTER SEQUENCE public."Notification_notification_id_seq" OWNED BY public."Notifi
 --
 
 CREATE TABLE public."Role" (
-    role_id integer NOT NULL,
-    role_name character varying,
-    role_level integer
+ role_id integer NOT NULL,
+ role_name character varying,
+ role_level integer
 );
 
 
@@ -329,12 +329,12 @@ ALTER TABLE public."Role" OWNER TO postgres;
 --
 
 CREATE SEQUENCE public."Role_role_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."Role_role_id_seq" OWNER TO postgres;
@@ -354,15 +354,15 @@ ALTER SEQUENCE public."Role_role_id_seq" OWNED BY public."Role".role_id;
 --
 
 CREATE TABLE public."Transaction" (
-    transaction_id integer NOT NULL,
-    content text,
-    sender_user_id integer,
-    type_id integer,
-    parent_transaction_id integer,
-    current_status character varying,
-    code character varying,
-    date date,
-    subject character varying
+ transaction_id integer NOT NULL,
+ content text,
+ sender_user_id integer,
+ type_id integer,
+ parent_transaction_id integer,
+ current_status character varying,
+ code character varying,
+ date date,
+ subject character varying
 );
 
 
@@ -374,12 +374,12 @@ ALTER TABLE public."Transaction" OWNER TO postgres;
 --
 
 CREATE TABLE public."Transaction_Path" (
-    path_id integer NOT NULL,
-    transaction_id integer,
-    from_department_id integer,
-    to_department_id integer,
-    path_notes text,
-    created_at timestamp without time zone
+ path_id integer NOT NULL,
+ transaction_id integer,
+ from_department_id integer,
+ to_department_id integer,
+ path_notes text,
+ created_at timestamp without time zone
 );
 
 
@@ -391,12 +391,12 @@ ALTER TABLE public."Transaction_Path" OWNER TO postgres;
 --
 
 CREATE SEQUENCE public."Transaction_Path_path_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."Transaction_Path_path_id_seq" OWNER TO postgres;
@@ -416,8 +416,8 @@ ALTER SEQUENCE public."Transaction_Path_path_id_seq" OWNED BY public."Transactio
 --
 
 CREATE TABLE public."Transaction_Receiver" (
-    transaction_id integer NOT NULL,
-    receiver_user_id integer NOT NULL
+ transaction_id integer NOT NULL,
+ receiver_user_id integer NOT NULL
 );
 
 
@@ -429,8 +429,8 @@ ALTER TABLE public."Transaction_Receiver" OWNER TO postgres;
 --
 
 CREATE TABLE public."Transaction_Type" (
-    type_id integer NOT NULL,
-    type_name character varying
+ type_id integer NOT NULL,
+ type_name character varying
 );
 
 
@@ -442,12 +442,12 @@ ALTER TABLE public."Transaction_Type" OWNER TO postgres;
 --
 
 CREATE SEQUENCE public."Transaction_Type_type_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."Transaction_Type_type_id_seq" OWNER TO postgres;
@@ -467,12 +467,12 @@ ALTER SEQUENCE public."Transaction_Type_type_id_seq" OWNED BY public."Transactio
 --
 
 CREATE SEQUENCE public."Transaction_transaction_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."Transaction_transaction_id_seq" OWNER TO postgres;
@@ -492,16 +492,16 @@ ALTER SEQUENCE public."Transaction_transaction_id_seq" OWNED BY public."Transact
 --
 
 CREATE TABLE public."User" (
-    user_id integer NOT NULL,
-    full_name character varying,
-    email character varying,
-    password_hash character varying,
-    password character varying,
-    mobile_number character varying,
-    landline character varying,
-    fax_number character varying,
-    profile_picture character varying,
-    is_first_login boolean
+ user_id integer NOT NULL,
+ full_name character varying,
+ email character varying,
+ password_hash character varying,
+ password character varying,
+ mobile_number character varying,
+ landline character varying,
+ fax_number character varying,
+ profile_picture character varying,
+ is_first_login boolean
 );
 
 
@@ -513,10 +513,10 @@ ALTER TABLE public."User" OWNER TO postgres;
 --
 
 CREATE TABLE public."User_Membership" (
-    user_membership_id integer NOT NULL,
-    user_id integer,
-    dep_role_id integer,
-    start_date date
+ user_membership_id integer NOT NULL,
+ user_id integer,
+ dep_role_id integer,
+ start_date date
 );
 
 
@@ -528,12 +528,12 @@ ALTER TABLE public."User_Membership" OWNER TO postgres;
 --
 
 CREATE SEQUENCE public."User_Membership_user_membership_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."User_Membership_user_membership_id_seq" OWNER TO postgres;
@@ -553,12 +553,12 @@ ALTER SEQUENCE public."User_Membership_user_membership_id_seq" OWNED BY public."
 --
 
 CREATE SEQUENCE public."User_user_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ AS integer
+ START WITH 1
+ INCREMENT BY 1
+ NO MINVALUE
+ NO MAXVALUE
+ CACHE 1;
 
 
 ALTER SEQUENCE public."User_user_id_seq" OWNER TO postgres;
@@ -682,18 +682,12 @@ ALTER TABLE ONLY public."User_Membership" ALTER COLUMN user_membership_id SET DE
 -- Data for Name: Action; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Action" (action_id, action_name, execution_date, annotation, transaction_id, performer_user_id, target_department_id) FROM stdin;
-\.
-
 
 --
 -- TOC entry 5154 (class 0 OID 16889)
 -- Dependencies: 243
 -- Data for Name: Attachment; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-
-COPY public."Attachment" (attachment_id, description, file_number, attachment_date, file_path, publishing_department_id, transaction_id) FROM stdin;
-\.
 
 
 --
@@ -702,18 +696,12 @@ COPY public."Attachment" (attachment_id, description, file_number, attachment_da
 -- Data for Name: College; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."College" (college_id, college_name) FROM stdin;
-\.
-
 
 --
 -- TOC entry 5133 (class 0 OID 16703)
 -- Dependencies: 222
 -- Data for Name: Department; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-
-COPY public."Department" (department_id, department_name, college_id, department_type) FROM stdin;
-\.
 
 
 --
@@ -722,18 +710,12 @@ COPY public."Department" (department_id, department_name, college_id, department
 -- Data for Name: Department_Role; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Department_Role" (dep_role_id, department_id, role_id) FROM stdin;
-\.
-
 
 --
 -- TOC entry 5152 (class 0 OID 16869)
 -- Dependencies: 241
 -- Data for Name: Draft; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-
-COPY public."Draft" (draft_id, transaction_id, archived_by_user_id, archive_date, storage_path) FROM stdin;
-\.
 
 
 --
@@ -742,18 +724,12 @@ COPY public."Draft" (draft_id, transaction_id, archived_by_user_id, archive_date
 -- Data for Name: Notification; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Notification" (notification_id, user_id, transaction_id, is_read) FROM stdin;
-\.
-
 
 --
 -- TOC entry 5135 (class 0 OID 16718)
 -- Dependencies: 224
 -- Data for Name: Role; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-
-COPY public."Role" (role_id, role_name, role_level) FROM stdin;
-\.
 
 
 --
@@ -762,18 +738,12 @@ COPY public."Role" (role_id, role_name, role_level) FROM stdin;
 -- Data for Name: Transaction; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Transaction" (transaction_id, content, sender_user_id, type_id, parent_transaction_id, current_status, code, date, subject) FROM stdin;
-\.
-
 
 --
 -- TOC entry 5148 (class 0 OID 16826)
 -- Dependencies: 237
 -- Data for Name: Transaction_Path; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-
-COPY public."Transaction_Path" (path_id, transaction_id, from_department_id, to_department_id, path_notes, created_at) FROM stdin;
-\.
 
 
 --
@@ -782,18 +752,12 @@ COPY public."Transaction_Path" (path_id, transaction_id, from_department_id, to_
 -- Data for Name: Transaction_Receiver; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Transaction_Receiver" (transaction_id, receiver_user_id) FROM stdin;
-\.
-
 
 --
 -- TOC entry 5143 (class 0 OID 16774)
 -- Dependencies: 232
 -- Data for Name: Transaction_Type; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-
-COPY public."Transaction_Type" (type_id, type_name) FROM stdin;
-\.
 
 
 --
@@ -802,18 +766,12 @@ COPY public."Transaction_Type" (type_id, type_name) FROM stdin;
 -- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."User" (user_id, full_name, email, password_hash, password, mobile_number, landline, fax_number, profile_picture, is_first_login) FROM stdin;
-\.
-
 
 --
 -- TOC entry 5141 (class 0 OID 16756)
 -- Dependencies: 230
 -- Data for Name: User_Membership; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-
-COPY public."User_Membership" (user_membership_id, user_id, dep_role_id, start_date) FROM stdin;
-\.
 
 
 --
@@ -939,7 +897,7 @@ SELECT pg_catalog.setval('public."User_user_id_seq"', 1, false);
 --
 
 ALTER TABLE ONLY public."Action"
-    ADD CONSTRAINT "Action_pkey" PRIMARY KEY (action_id);
+ ADD CONSTRAINT "Action_pkey" PRIMARY KEY (action_id);
 
 
 --
@@ -948,7 +906,7 @@ ALTER TABLE ONLY public."Action"
 --
 
 ALTER TABLE ONLY public."Attachment"
-    ADD CONSTRAINT "Attachment_pkey" PRIMARY KEY (attachment_id);
+ ADD CONSTRAINT "Attachment_pkey" PRIMARY KEY (attachment_id);
 
 
 --
@@ -957,7 +915,7 @@ ALTER TABLE ONLY public."Attachment"
 --
 
 ALTER TABLE ONLY public."College"
-    ADD CONSTRAINT "College_pkey" PRIMARY KEY (college_id);
+ ADD CONSTRAINT "College_pkey" PRIMARY KEY (college_id);
 
 
 --
@@ -966,7 +924,7 @@ ALTER TABLE ONLY public."College"
 --
 
 ALTER TABLE ONLY public."Department_Role"
-    ADD CONSTRAINT "Department_Role_pkey" PRIMARY KEY (dep_role_id);
+ ADD CONSTRAINT "Department_Role_pkey" PRIMARY KEY (dep_role_id);
 
 
 --
@@ -975,7 +933,7 @@ ALTER TABLE ONLY public."Department_Role"
 --
 
 ALTER TABLE ONLY public."Department"
-    ADD CONSTRAINT "Department_pkey" PRIMARY KEY (department_id);
+ ADD CONSTRAINT "Department_pkey" PRIMARY KEY (department_id);
 
 
 --
@@ -984,7 +942,7 @@ ALTER TABLE ONLY public."Department"
 --
 
 ALTER TABLE ONLY public."Draft"
-    ADD CONSTRAINT "Draft_pkey" PRIMARY KEY (draft_id);
+ ADD CONSTRAINT "Draft_pkey" PRIMARY KEY (draft_id);
 
 
 --
@@ -993,7 +951,7 @@ ALTER TABLE ONLY public."Draft"
 --
 
 ALTER TABLE ONLY public."Notification"
-    ADD CONSTRAINT "Notification_pkey" PRIMARY KEY (notification_id);
+ ADD CONSTRAINT "Notification_pkey" PRIMARY KEY (notification_id);
 
 
 --
@@ -1002,7 +960,7 @@ ALTER TABLE ONLY public."Notification"
 --
 
 ALTER TABLE ONLY public."Role"
-    ADD CONSTRAINT "Role_pkey" PRIMARY KEY (role_id);
+ ADD CONSTRAINT "Role_pkey" PRIMARY KEY (role_id);
 
 
 --
@@ -1011,7 +969,7 @@ ALTER TABLE ONLY public."Role"
 --
 
 ALTER TABLE ONLY public."Transaction_Path"
-    ADD CONSTRAINT "Transaction_Path_pkey" PRIMARY KEY (path_id);
+ ADD CONSTRAINT "Transaction_Path_pkey" PRIMARY KEY (path_id);
 
 
 --
@@ -1020,7 +978,7 @@ ALTER TABLE ONLY public."Transaction_Path"
 --
 
 ALTER TABLE ONLY public."Transaction_Receiver"
-    ADD CONSTRAINT "Transaction_Receiver_pkey" PRIMARY KEY (transaction_id, receiver_user_id);
+ ADD CONSTRAINT "Transaction_Receiver_pkey" PRIMARY KEY (transaction_id, receiver_user_id);
 
 
 --
@@ -1029,7 +987,7 @@ ALTER TABLE ONLY public."Transaction_Receiver"
 --
 
 ALTER TABLE ONLY public."Transaction_Type"
-    ADD CONSTRAINT "Transaction_Type_pkey" PRIMARY KEY (type_id);
+ ADD CONSTRAINT "Transaction_Type_pkey" PRIMARY KEY (type_id);
 
 
 --
@@ -1038,7 +996,7 @@ ALTER TABLE ONLY public."Transaction_Type"
 --
 
 ALTER TABLE ONLY public."Transaction"
-    ADD CONSTRAINT "Transaction_pkey" PRIMARY KEY (transaction_id);
+ ADD CONSTRAINT "Transaction_pkey" PRIMARY KEY (transaction_id);
 
 
 --
@@ -1047,7 +1005,7 @@ ALTER TABLE ONLY public."Transaction"
 --
 
 ALTER TABLE ONLY public."User_Membership"
-    ADD CONSTRAINT "User_Membership_pkey" PRIMARY KEY (user_membership_id);
+ ADD CONSTRAINT "User_Membership_pkey" PRIMARY KEY (user_membership_id);
 
 
 --
@@ -1056,7 +1014,7 @@ ALTER TABLE ONLY public."User_Membership"
 --
 
 ALTER TABLE ONLY public."User"
-    ADD CONSTRAINT "User_pkey" PRIMARY KEY (user_id);
+  ADD CONSTRAINT "User_pkey" PRIMARY KEY (user_id);
 
 
 --
@@ -1065,7 +1023,7 @@ ALTER TABLE ONLY public."User"
 --
 
 ALTER TABLE ONLY public."Action"
-    ADD CONSTRAINT "Action_performer_user_id_fkey" FOREIGN KEY (performer_user_id) REFERENCES public."User"(user_id);
+  ADD CONSTRAINT "Action_performer_user_id_fkey" FOREIGN KEY (performer_user_id) REFERENCES public."User"(user_id);
 
 
 --
@@ -1074,7 +1032,7 @@ ALTER TABLE ONLY public."Action"
 --
 
 ALTER TABLE ONLY public."Action"
-    ADD CONSTRAINT "Action_target_department_id_fkey" FOREIGN KEY (target_department_id) REFERENCES public."Department"(department_id);
+ ADD CONSTRAINT "Action_target_department_id_fkey" FOREIGN KEY (target_department_id) REFERENCES public."Department"(department_id);
 
 
 --
@@ -1083,7 +1041,7 @@ ALTER TABLE ONLY public."Action"
 --
 
 ALTER TABLE ONLY public."Action"
-    ADD CONSTRAINT "Action_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
+ ADD CONSTRAINT "Action_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
 
 
 --
@@ -1092,7 +1050,7 @@ ALTER TABLE ONLY public."Action"
 --
 
 ALTER TABLE ONLY public."Attachment"
-    ADD CONSTRAINT "Attachment_publishing_department_id_fkey" FOREIGN KEY (publishing_department_id) REFERENCES public."Department"(department_id);
+ ADD CONSTRAINT "Attachment_publishing_department_id_fkey" FOREIGN KEY (publishing_department_id) REFERENCES public."Department"(department_id);
 
 
 --
@@ -1101,7 +1059,7 @@ ALTER TABLE ONLY public."Attachment"
 --
 
 ALTER TABLE ONLY public."Attachment"
-    ADD CONSTRAINT "Attachment_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
+ ADD CONSTRAINT "Attachment_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
 
 
 --
@@ -1110,7 +1068,7 @@ ALTER TABLE ONLY public."Attachment"
 --
 
 ALTER TABLE ONLY public."Department_Role"
-    ADD CONSTRAINT "Department_Role_department_id_fkey" FOREIGN KEY (department_id) REFERENCES public."Department"(department_id);
+ ADD CONSTRAINT "Department_Role_department_id_fkey" FOREIGN KEY (department_id) REFERENCES public."Department"(department_id);
 
 
 --
@@ -1119,7 +1077,7 @@ ALTER TABLE ONLY public."Department_Role"
 --
 
 ALTER TABLE ONLY public."Department_Role"
-    ADD CONSTRAINT "Department_Role_role_id_fkey" FOREIGN KEY (role_id) REFERENCES public."Role"(role_id);
+ ADD CONSTRAINT "Department_Role_role_id_fkey" FOREIGN KEY (role_id) REFERENCES public."Role"(role_id);
 
 
 --
@@ -1128,7 +1086,7 @@ ALTER TABLE ONLY public."Department_Role"
 --
 
 ALTER TABLE ONLY public."Department"
-    ADD CONSTRAINT "Department_college_id_fkey" FOREIGN KEY (college_id) REFERENCES public."College"(college_id);
+ ADD CONSTRAINT "Department_college_id_fkey" FOREIGN KEY (college_id) REFERENCES public."College"(college_id);
 
 
 --
@@ -1137,7 +1095,7 @@ ALTER TABLE ONLY public."Department"
 --
 
 ALTER TABLE ONLY public."Draft"
-    ADD CONSTRAINT "Draft_archived_by_user_id_fkey" FOREIGN KEY (archived_by_user_id) REFERENCES public."User"(user_id);
+ ADD CONSTRAINT "Draft_archived_by_user_id_fkey" FOREIGN KEY (archived_by_user_id) REFERENCES public."User"(user_id);
 
 
 --
@@ -1146,7 +1104,7 @@ ALTER TABLE ONLY public."Draft"
 --
 
 ALTER TABLE ONLY public."Draft"
-    ADD CONSTRAINT "Draft_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
+ ADD CONSTRAINT "Draft_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
 
 
 --
@@ -1155,7 +1113,7 @@ ALTER TABLE ONLY public."Draft"
 --
 
 ALTER TABLE ONLY public."Notification"
-    ADD CONSTRAINT "Notification_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
+ ADD CONSTRAINT "Notification_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
 
 
 --
@@ -1164,7 +1122,7 @@ ALTER TABLE ONLY public."Notification"
 --
 
 ALTER TABLE ONLY public."Notification"
-    ADD CONSTRAINT "Notification_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public."User"(user_id);
+   ADD CONSTRAINT "Notification_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public."User"(user_id);
 
 
 --
@@ -1173,7 +1131,7 @@ ALTER TABLE ONLY public."Notification"
 --
 
 ALTER TABLE ONLY public."Transaction_Path"
-    ADD CONSTRAINT "Transaction_Path_from_department_id_fkey" FOREIGN KEY (from_department_id) REFERENCES public."Department"(department_id);
+   ADD CONSTRAINT "Transaction_Path_from_department_id_fkey" FOREIGN KEY (from_department_id) REFERENCES public."Department"(department_id);
 
 
 --
@@ -1182,7 +1140,7 @@ ALTER TABLE ONLY public."Transaction_Path"
 --
 
 ALTER TABLE ONLY public."Transaction_Path"
-    ADD CONSTRAINT "Transaction_Path_to_department_id_fkey" FOREIGN KEY (to_department_id) REFERENCES public."Department"(department_id);
+   ADD CONSTRAINT "Transaction_Path_to_department_id_fkey" FOREIGN KEY (to_department_id) REFERENCES public."Department"(department_id);
 
 
 --
@@ -1191,7 +1149,7 @@ ALTER TABLE ONLY public."Transaction_Path"
 --
 
 ALTER TABLE ONLY public."Transaction_Path"
-    ADD CONSTRAINT "Transaction_Path_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
+   ADD CONSTRAINT "Transaction_Path_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
 
 
 --
@@ -1200,7 +1158,7 @@ ALTER TABLE ONLY public."Transaction_Path"
 --
 
 ALTER TABLE ONLY public."Transaction_Receiver"
-    ADD CONSTRAINT "Transaction_Receiver_receiver_user_id_fkey" FOREIGN KEY (receiver_user_id) REFERENCES public."User"(user_id);
+   ADD CONSTRAINT "Transaction_Receiver_receiver_user_id_fkey" FOREIGN KEY (receiver_user_id) REFERENCES public."User"(user_id);
 
 
 --
@@ -1209,7 +1167,7 @@ ALTER TABLE ONLY public."Transaction_Receiver"
 --
 
 ALTER TABLE ONLY public."Transaction_Receiver"
-    ADD CONSTRAINT "Transaction_Receiver_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
+   ADD CONSTRAINT "Transaction_Receiver_transaction_id_fkey" FOREIGN KEY (transaction_id) REFERENCES public."Transaction"(transaction_id);
 
 
 --
@@ -1218,7 +1176,7 @@ ALTER TABLE ONLY public."Transaction_Receiver"
 --
 
 ALTER TABLE ONLY public."Transaction"
-    ADD CONSTRAINT "Transaction_parent_transaction_id_fkey" FOREIGN KEY (parent_transaction_id) REFERENCES public."Transaction"(transaction_id);
+ ADD CONSTRAINT "Transaction_parent_transaction_id_fkey" FOREIGN KEY (parent_transaction_id) REFERENCES public."Transaction"(transaction_id);
 
 
 --
@@ -1227,7 +1185,7 @@ ALTER TABLE ONLY public."Transaction"
 --
 
 ALTER TABLE ONLY public."Transaction"
-    ADD CONSTRAINT "Transaction_sender_user_id_fkey" FOREIGN KEY (sender_user_id) REFERENCES public."User"(user_id);
+   ADD CONSTRAINT "Transaction_sender_user_id_fkey" FOREIGN KEY (sender_user_id) REFERENCES public."User"(user_id);
 
 
 --
@@ -1236,7 +1194,7 @@ ALTER TABLE ONLY public."Transaction"
 --
 
 ALTER TABLE ONLY public."Transaction"
-    ADD CONSTRAINT "Transaction_type_id_fkey" FOREIGN KEY (type_id) REFERENCES public."Transaction_Type"(type_id);
+   ADD CONSTRAINT "Transaction_type_id_fkey" FOREIGN KEY (type_id) REFERENCES public."Transaction_Type"(type_id);
 
 
 --
@@ -1245,7 +1203,7 @@ ALTER TABLE ONLY public."Transaction"
 --
 
 ALTER TABLE ONLY public."User_Membership"
-    ADD CONSTRAINT "User_Membership_dep_role_id_fkey" FOREIGN KEY (dep_role_id) REFERENCES public."Department_Role"(dep_role_id);
+   ADD CONSTRAINT "User_Membership_dep_role_id_fkey" FOREIGN KEY (dep_role_id) REFERENCES public."Department_Role"(dep_role_id);
 
 
 --
@@ -1254,7 +1212,7 @@ ALTER TABLE ONLY public."User_Membership"
 --
 
 ALTER TABLE ONLY public."User_Membership"
-    ADD CONSTRAINT "User_Membership_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public."User"(user_id);
+   ADD CONSTRAINT "User_Membership_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public."User"(user_id);
 
 
 -- Completed on 2025-10-25 14:03:20
@@ -1262,6 +1220,3 @@ ALTER TABLE ONLY public."User_Membership"
 --
 -- PostgreSQL database dump complete
 --
-
-\unrestrict Z1xvsS08l6Hmw2hkWMrYK2EJFjzyNGNq3Ltyt12IutTmwfZ6EYXn34coeRqjrWe
-
