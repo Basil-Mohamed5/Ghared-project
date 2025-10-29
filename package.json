@@ -1,10 +1,12 @@
 {
-  "name": "ghared-project",
+  "type": "module",
+  "name": "ghared-project-alaa",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -23,10 +25,20 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "pdfkit": "^0.17.2",
     "pg": "^8.16.3",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlaaAbdullah244/Ghared-project-alaa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AlaaAbdullah244/Ghared-project-alaa/issues"
+  },
+  "homepage": "https://github.com/AlaaAbdullah244/Ghared-project-alaa#readme",
+  "description": ""
 }
