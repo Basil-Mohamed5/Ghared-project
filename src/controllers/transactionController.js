@@ -1,4 +1,75 @@
-import { pool } from "../config/db.js";
+import pool from "../config/db.js";
+
+/* --------------------------------------------------
+  جلب كل أنواع المعاملات (Transaction Types)
+-------------------------------------------------- */
+export const getTransactionTypes = async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM public."Transaction_Type" ORDER BY type_id ASC'
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Error fetching transaction types:", error);
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
+/* --------------------------------------------------
+  إنشاء معاملة جديدة (Create Transaction)
+-------------------------------------------------- */
+export const createTransaction = async (req, res) => {
+  try {
+    const { content, sender_user_id, type_id, subject, code } = req.body;
+
+    if (!content || !sender_user_id || !type_id || !subject || !code) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const insertQuery = `
+        INSERT INTO public."Transaction" (content, sender_user_id, type_id, subject, code)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *
+    `;
+
+    const result = await pool.query(insertQuery, [
+      content,
+      sender_user_id,
+      type_id,
+      subject,
+      code,
+    ]);
+
+    res.status(201).json({
+      message: "Transaction created successfully",
+      transaction: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error creating transaction:", error);
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
+/* --------------------------------------------------
+  جلب كل المعاملات (Get All Transactions)
+-------------------------------------------------- */
+export const getAllTransactions = async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM public."Transaction" ORDER BY transaction_id ASC'
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
+  }
+};
 
 /* --------------------------------------------------
   إرسال معاملة جديدة (Transaction Send)
@@ -85,7 +156,7 @@ export const sendTransaction = async (req, res) => {
 };
 
 /* --------------------------------------------------
-   عرض المعاملات المستلمة (Received)
+   عرض المعاملات المستلمة (Received Transactions)
 -------------------------------------------------- */
 export const getReceivedTransactions = async (req, res) => {
   const { userId } = req.params;
@@ -121,7 +192,7 @@ export const getReceivedTransactions = async (req, res) => {
 };
 
 /* --------------------------------------------------
-   الرد على معاملة (Reply)
+   الرد على معاملة (Reply to Transaction)
 -------------------------------------------------- */
 export const replyToTransaction = async (req, res) => {
   const { sender_user_id, parent_transaction_id, subject, content } = req.body;
@@ -173,7 +244,7 @@ export const replyToTransaction = async (req, res) => {
 
 /* --------------------------------------------------
   تجهيز بيانات المعاملة للطباعة (Print Data)
-------------------------------------------------- */
+-------------------------------------------------- */
 export const getTransactionForPrint = async (req, res) => {
   const { id } = req.params;
   try {
@@ -191,7 +262,6 @@ export const getTransactionForPrint = async (req, res) => {
       FROM "Transaction" t
       JOIN "Transaction_Type" tt ON t."type_id" = tt."type_id"
       JOIN "User" u ON t."sender_user_id" = u."user_id"
- 
       LEFT JOIN "Transaction_Receiver" tr ON t."transaction_id" = tr."transaction_id"
       WHERE t."transaction_id" = $1
       GROUP BY t."transaction_id", tt."type_name", u."full_name"
