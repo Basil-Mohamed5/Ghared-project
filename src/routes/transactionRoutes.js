@@ -4,13 +4,26 @@ import {
   getReceivedTransactions,
   replyToTransaction,
   getTransactionForPrint,
+  getTransactionTypes,
+  createTransaction,
+  getAllTransactions
 } from "../controllers/transactionController.js";
 
 const router = express.Router();
 
-router.post("/send", sendTransaction);
-router.get("/received/:userId", getReceivedTransactions);
-router.post("/reply", replyToTransaction);
-router.get("/:id/print", getTransactionForPrint);
+// ----------------------------------------
+// Transaction Types & CRUD
+// ----------------------------------------
+router.get("/types", getTransactionTypes);       // GET جميع أنواع المعاملات
+router.post("/", createTransaction);             // POST إنشاء معاملة جديدة
+router.get("/", getAllTransactions);            // GET كل المعاملات
+
+// ----------------------------------------
+// Transaction Actions (Send, Receive, Reply, Print)
+// ----------------------------------------
+router.post("/send", sendTransaction);                   // إرسال معاملة جديدة
+router.get("/received/:userId", getReceivedTransactions); // جلب المعاملات المستلمة
+router.post("/reply", replyToTransaction);              // الرد على معاملة
+router.get("/:id/print", getTransactionForPrint);       // جلب بيانات المعاملة للطباعة
 
 export default router;
