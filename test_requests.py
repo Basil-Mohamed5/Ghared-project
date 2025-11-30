@@ -1,6 +1,7 @@
+# test_requests.py
 import requests
 
-BASE_URL = "http://localhost:5000"
+BASE_URL = "http://localhost:5000/api"
 
 def print_response(label, response):
     try:
@@ -10,51 +11,82 @@ def print_response(label, response):
         print(f"--- {label} ERROR ---")
         print(e, response.text, "\n")
 
-# ----------------------------
-# 1️⃣ GET all transaction types
-response = requests.get(f"{BASE_URL}/transactions/types")
-print_response("GET Transaction Types", response)
+# 0️⃣ Login to get token
+login_data = {
+    "email": "admin@example.com",  # using the admin user from test data
+    "password": "1234"
+}
+r = requests.post(f"{BASE_URL}/auth/login", json=login_data)
+print_response("POST Login", r)
+token = r.json().get("token") if r.status_code == 200 else None
+headers = {"Authorization": f"Bearer {token}"} if token else {}
 
-# ----------------------------
-# 2️⃣ POST a new transaction
-transaction_data = {
-    "content": "محتوى المعاملة التجريبي",
+# 1️⃣ GET transaction types
+r = requests.get(f"{BASE_URL}/transaction/types", headers=headers)
+print_response("GET Transaction Types", r)
+
+# 2️⃣ create transaction (use a valid sender_user_id existing in DB)
+tx = {
+    "content": "محتوى تجريبي",
     "sender_user_id": 1,
     "type_id": 1,
-    "subject": "عنوان المعاملة التجريبي",
-    "code": "TRX_TEST_PY"
+    "subject": "موضوع تجريبي"
 }
-response = requests.post(f"{BASE_URL}/transactions", json=transaction_data)
-print_response("POST Transaction", response)
-transaction_id = response.json().get("transaction", {}).get("transaction_id")
+r = requests.post(f"{BASE_URL}/transaction", json=tx, headers=headers)
+print_response("POST Transaction", r)
 
-# ----------------------------
-# 3️⃣ GET all drafts
-response = requests.get(f"{BASE_URL}/drafts")
-print_response("GET Drafts", response)
+# 3️⃣ send transaction (with notifications)
+send_tx = {
+    "sender_user_id": 1,
+    "type_id": 1,
+    "subject": "موضوع إرسال",
+    "content": "محتوى إرسال",
+    "receiver_user_ids": [2]  # assuming user 2 exists
+}
+r = requests.post(f"{BASE_URL}/transaction/send", json=send_tx, headers=headers)
+print_response("POST Send Transaction", r)
 
-# ----------------------------
-# 4️⃣ POST a new draft
-draft_data = {
-    "transaction_id": transaction_id,
+# 4️⃣ send acknowledgment (type_id=2)
+ack_tx = {
+    "sender_user_id": 1,
+    "type_id": 2,
+    "subject": "إقرار تجريبي",
+    "content": "محتوى إقرار",
+    "receiver_user_ids": [2]
+}
+r = requests.post(f"{BASE_URL}/transaction/send", json=ack_tx, headers=headers)
+print_response("POST Send Acknowledgment", r)
+
+# 5️⃣ create draft
+draft = {
+    "transaction_id": 24,  # using the transaction_id from previous creation
     "archived_by_user_id": 1,
-    "storage_path": "C:/drafts/test_python.pdf"
+    "storage_path": "C:/drafts/test_draft.pdf"
 }
-response = requests.post(f"{BASE_URL}/drafts", json=draft_data)
-print_response("POST Draft", response)
-draft_id = response.json().get("draft", {}).get("draft_id")
+r = requests.post(f"{BASE_URL}/draft", json=draft, headers=headers)
+print_response("POST Create Draft", r)
 
-# ----------------------------
-# 5️⃣ SEND draft (convert to transaction)
-response = requests.post(f"{BASE_URL}/drafts/{draft_id}/send")
-print_response(f"SEND Draft {draft_id}", response)
+# 6️⃣ get all drafts
+r = requests.get(f"{BASE_URL}/draft", headers=headers)
+print_response("GET All Drafts", r)
 
-# ----------------------------
-# 6️⃣ DELETE draft
-response = requests.delete(f"{BASE_URL}/drafts/{draft_id}")
-print_response(f"DELETE Draft {draft_id}", response)
+# 7️⃣ get all transactions
+r = requests.get(f"{BASE_URL}/transaction", headers=headers)
+print_response("GET All Transactions", r)
 
-# ----------------------------
-# 7️⃣ GET all transactions to confirm
-response = requests.get(f"{BASE_URL}/transactions")
-print_response("GET Transactions", response)
+# 8️⃣ get received transactions
+r = requests.get(f"{BASE_URL}/transaction/received/1", headers=headers)
+print_response("GET Received Transactions", r)
+
+# 9️⃣ register a new user
+register_data = {
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "test123"
+}
+r = requests.post(f"{BASE_URL}/auth/register", json=register_data)
+print_response("POST Register", r)
+
+# 10️⃣ test-db endpoint
+r = requests.get(f"{BASE_URL}/../test-db")  # Note: this is /test-db, not under /api
+print_response("GET Test DB", r)
