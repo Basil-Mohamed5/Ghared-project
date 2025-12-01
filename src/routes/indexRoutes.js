@@ -1,16 +1,10 @@
 import express from "express";
+
 const router = express.Router();
 
-// ده بس Route تعريفي بسيطة
+// Health check
 router.get("/", (req, res) => {
-    res.json({
-        message: "API Root. Available endpoints:",
-        endpoints: [
-            "/api/auth",
-            "/api/transaction",
-            "/api/draft"
-        ]
-    });
+    res.json({ message: "API is running" });
 });
 
 export default router;

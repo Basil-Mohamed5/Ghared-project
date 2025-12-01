@@ -1,29 +1,14 @@
 import express from "express";
-import {
-  sendTransaction,
-  getReceivedTransactions,
-  replyToTransaction,
-  getTransactionForPrint,
-  getTransactionTypes,
-  createTransaction,
-  getAllTransactions
-} from "../controllers/transactionController.js";
+import { createTransaction, getTransactionTypes } from "../controllers/transactionController.js";
+import { protect } from "../middleware/authMiddleware.js";
+import asyncWrapper from "../middleware/asyncWrapper.js";
 
 const router = express.Router();
 
-// ----------------------------------------
-// Transaction Types & CRUD
-// ----------------------------------------
-router.get("/types", getTransactionTypes);       // GET جميع أنواع المعاملات
-router.post("/", createTransaction);             // POST إنشاء معاملة جديدة
-router.get("/", getAllTransactions);            // GET كل المعاملات
+// Get Transaction Types
+router.get("/types", protect, asyncWrapper(getTransactionTypes));
 
-// ----------------------------------------
-// Transaction Actions (Send, Receive, Reply, Print)
-// ----------------------------------------
-router.post("/send", sendTransaction);                   // إرسال معاملة جديدة
-router.get("/received/:userId", getReceivedTransactions); // جلب المعاملات المستلمة
-router.post("/reply", replyToTransaction);              // الرد على معاملة
-router.get("/:id/print", getTransactionForPrint);       // جلب بيانات المعاملة للطباعة
+// Create Transaction
+router.post("/", protect, asyncWrapper(createTransaction));
 
 export default router;

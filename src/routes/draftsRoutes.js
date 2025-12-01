@@ -1,19 +1,17 @@
-// src/routes/draftRoutes.js
 import express from "express";
-import {
-    createDraft,
-    getAllDrafts,
-    deleteDraft,
-    sendDraft
-} from "../controllers/draftController.js";
+import { getDrafts, deleteDraft, sendDraft } from "../controllers/draftController.js";
 import { protect } from "../middleware/authMiddleware.js";
-import { checkSendPermission } from "../middleware/checkRole.js";
+import asyncWrapper from "../middleware/asyncWrapper.js";
 
 const router = express.Router();
 
-router.post("/", protect, createDraft);
-router.get("/", protect, getAllDrafts);
-router.delete("/:id", protect, deleteDraft);
-router.post("/:id/send", protect, checkSendPermission, sendDraft);
+// Get All Drafts
+router.get("/", protect, asyncWrapper(getDrafts));
+
+// Delete Draft
+router.delete("/:id", protect, asyncWrapper(deleteDraft));
+
+// Send Draft
+router.post("/:id/send", protect, asyncWrapper(sendDraft));
 
 export default router;

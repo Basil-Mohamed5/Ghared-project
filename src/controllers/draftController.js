@@ -1,80 +1,72 @@
-// src/controllers/draftController.js
 import pool from "../config/db.js";
 
-export const createDraft = async (req, res) => {
-    try {
-        const { transaction_id, archived_by_user_id, storage_path } = req.body;
-        if (!transaction_id || !archived_by_user_id || !storage_path) {
-            return res.status(400).json({ message: "Missing required fields" });
-        }
-        // Check if transaction exists
-        const transactionCheck = await pool.query(
-            `SELECT transaction_id FROM public."Transaction" WHERE transaction_id = $1`,
-            [transaction_id]
-        );
-        if (transactionCheck.rows.length === 0) {
-            return res.status(404).json({ message: "Transaction not found" });
-        }
-        const result = await pool.query(
-            `INSERT INTO public."Draft" (transaction_id, archived_by_user_id, archive_date, storage_path)
-       VALUES ($1, $2, NOW(), $3) RETURNING *`,
-            [transaction_id, archived_by_user_id, storage_path]
-        );
-        res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        res.status(201).json({ message: "Draft created successfully", draft: result.rows[0] });
-    } catch (error) {
-        console.error("Error creating draft:", error);
-        res.status(500).json({ error: "Internal Server Error", details: error.message });
-    }
+// Get All Drafts for User
+export const getDrafts = async (req, res) => {
+    const userId = req.user.id;
+
+    const query = `
+        SELECT id, content, attachments, timestamp
+        FROM drafts
+        WHERE user_id = ?
+        ORDER BY timestamp DESC
+    `;
+    const [rows] = await pool.execute(query, [userId]);
+
+    res.json(rows);
 };
 
-export const getAllDrafts = async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM public."Draft" ORDER BY draft_id ASC');
-        res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        res.status(200).json(result.rows);
-    } catch (error) {
-        console.error("Error fetching drafts:", error);
-        res.status(500).json({ error: "Internal Server Error", details: error.message });
-    }
-};
-
+// Delete Draft
 export const deleteDraft = async (req, res) => {
     const { id } = req.params;
-    try {
-        const result = await pool.query('DELETE FROM public."Draft" WHERE draft_id = $1 RETURNING *', [id]);
-        if (result.rowCount === 0) return res.status(404).json({ message: "Draft not found" });
-        res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        res.status(200).json({ message: "Draft deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting draft:", error);
-        res.status(500).json({ error: "Internal Server Error", details: error.message });
+    const userId = req.user.id;
+
+    const query = 'DELETE FROM drafts WHERE id = ? AND user_id = ?';
+    const [result] = await pool.execute(query, [id, userId]);
+
+    if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Draft not found' });
     }
+
+    res.json({ message: 'Draft deleted' });
 };
 
+// Send Draft (Convert to Transaction)
 export const sendDraft = async (req, res) => {
     const { id } = req.params;
-    try {
-        const draftResult = await pool.query('SELECT * FROM public."Draft" WHERE draft_id = $1', [id]);
-        const draft = draftResult.rows[0];
-        if (!draft) return res.status(404).json({ message: "Draft not found" });
+    const { receiver_id, type } = req.body; // receiver_id and type from request
+    const userId = req.user.id;
 
-        const transactionResult = await pool.query('SELECT * FROM public."Transaction" WHERE transaction_id = $1', [draft.transaction_id]);
-        const originalTransaction = transactionResult.rows[0];
-        if (!originalTransaction) return res.status(404).json({ message: "Original transaction not found" });
-
-        const newTransactionResult = await pool.query(
-            `INSERT INTO public."Transaction" (content, sender_user_id, type_id, subject, code, date, current_status)
-       VALUES ($1, $2, $3, $4, $5, NOW(), 'active') RETURNING *`,
-            [originalTransaction.content, originalTransaction.sender_user_id, originalTransaction.type_id, originalTransaction.subject, originalTransaction.code]
-        );
-
-        await pool.query('DELETE FROM public."Draft" WHERE draft_id = $1', [id]);
-
-        res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        res.status(200).json({ message: "Draft sent successfully and converted to a new transaction", transaction: newTransactionResult.rows[0] });
-    } catch (error) {
-        console.error("Error sending draft:", error);
-        res.status(500).json({ error: "Internal Server Error", details: error.message });
+    // Get draft
+    const [drafts] = await pool.execute('SELECT * FROM drafts WHERE id = ? AND user_id = ?', [id, userId]);
+    if (drafts.length === 0) {
+        return res.status(404).json({ error: 'Draft not found' });
     }
+    const draft = drafts[0];
+
+    // Validate type
+    if (!['normal', 'iqrar'].includes(type)) {
+        return res.status(400).json({ error: 'Invalid transaction type' });
+    }
+
+    // Insert transaction
+    const transactionQuery = `
+        INSERT INTO transactions (sender_id, receiver_id, type, content, attachments)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+    const [transactionResult] = await pool.execute(transactionQuery, [userId, receiver_id, type, draft.content, draft.attachments]);
+    const transactionId = transactionResult.insertId;
+
+    // Insert notification
+    const notificationQuery = `
+        INSERT INTO notifications (user_id, title, message, transaction_id)
+        VALUES (?, ?, ?, ?)
+    `;
+    const title = type === 'iqrar' ? 'إقرار جديد' : 'معاملة جديدة';
+    const message = `لديك ${type === 'iqrar' ? 'إقرار' : 'معاملة'} جديدة`;
+    await pool.execute(notificationQuery, [receiver_id, title, message, transactionId]);
+
+    // Delete draft
+    await pool.execute('DELETE FROM drafts WHERE id = ?', [id]);
+
+    res.json({ message: 'Draft sent as transaction', transactionId });
 };

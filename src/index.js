@@ -6,8 +6,7 @@ import pool from "./config/db.js";
 
 // Routes
 import indexRoutes from "./routes/indexRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
-import transactionsRoutes from "./routes/transactionsRoutes.js";
+import transactionsRoutes from "./routes/transactionRoutes.js";
 import draftRoutes from "./routes/draftsRoutes.js";
 
 const app = express();
@@ -20,15 +19,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api", indexRoutes);
-app.use("/api/auth", authRoutes);
 app.use("/api/transaction", transactionsRoutes);
 app.use("/api/draft", draftRoutes);
 
 // Test DB route (optional)
 app.get("/test-db", async (req, res) => {
     try {
-        const result = await pool.query('SELECT NOW()');
-        res.json({ now: result.rows[0] });
+        const [rows] = await pool.execute('SELECT NOW() as now');
+        res.json({ now: rows[0].now });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -37,7 +35,19 @@ app.get("/test-db", async (req, res) => {
 // Generic error handler
 app.use((err, req, res, next) => {
     console.error("Unhandled error:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    if (err.isOperational) {
+        res.status(err.statusCode).json({
+            success: false,
+            message: err.message,
+            error: err.message
+        });
+    } else {
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: "Internal Server Error"
+        });
+    }
 });
 
 // Start

@@ -1,20 +1,17 @@
-// src/middleware/authMiddleware.js
 import jwt from "jsonwebtoken";
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 export const protect = (req, res, next) => {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+        return res.status(401).json({ error: "No token provided" });
+    }
+
     try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({ message: "No token provided" });
-        }
-        const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, JWT_SECRET);
-        // decoded should contain at least { id, role }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
         req.user = decoded;
         next();
     } catch (err) {
-        console.error("Auth error:", err);
-        res.status(401).json({ message: "Invalid or expired token" });
+        res.status(401).json({ error: "Invalid token" });
     }
 };
