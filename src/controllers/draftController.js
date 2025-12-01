@@ -33,40 +33,51 @@ export const deleteDraft = async (req, res) => {
 // Send Draft (Convert to Transaction)
 export const sendDraft = async (req, res) => {
     const { id } = req.params;
-    const { receiver_id, type } = req.body; // receiver_id and type from request
-    const userId = req.user.id;
+    const userId = 1; // Mock user ID since no auth
 
     // Get draft
-    const [drafts] = await pool.execute('SELECT * FROM drafts WHERE id = ? AND user_id = ?', [id, userId]);
-    if (drafts.length === 0) {
+    const draftQuery = 'SELECT * FROM drafts WHERE id = $1 AND user_id = $2';
+    const draftResult = await pool.query(draftQuery, [id, userId]);
+    if (draftResult.rows.length === 0) {
         return res.status(404).json({ error: 'Draft not found' });
     }
-    const draft = drafts[0];
+    const draft = draftResult.rows[0];
 
-    // Validate type
-    if (!['normal', 'iqrar'].includes(type)) {
+    let transactionData;
+    try {
+        transactionData = JSON.parse(draft.content);
+    } catch (error) {
+        // If not JSON, treat as regular draft content
+        transactionData = { content: draft.content, attachments: draft.attachments };
+    }
+
+    const { receiver_id, type, content, attachments } = transactionData;
+
+    // Validate type if provided
+    if (type && !['normal', 'iqrar'].includes(type)) {
         return res.status(400).json({ error: 'Invalid transaction type' });
     }
 
     // Insert transaction
     const transactionQuery = `
         INSERT INTO transactions (sender_id, receiver_id, type, content, attachments)
-        VALUES (?, ?, ?, ?, ?)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id
     `;
-    const [transactionResult] = await pool.execute(transactionQuery, [userId, receiver_id, type, draft.content, draft.attachments]);
-    const transactionId = transactionResult.insertId;
+    const transactionResult = await pool.query(transactionQuery, [userId, receiver_id, type || 'normal', content, attachments || null]);
+    const transactionId = transactionResult.rows[0].id;
 
     // Insert notification
     const notificationQuery = `
         INSERT INTO notifications (user_id, title, message, transaction_id)
-        VALUES (?, ?, ?, ?)
+        VALUES ($1, $2, $3, $4)
     `;
     const title = type === 'iqrar' ? 'إقرار جديد' : 'معاملة جديدة';
     const message = `لديك ${type === 'iqrar' ? 'إقرار' : 'معاملة'} جديدة`;
-    await pool.execute(notificationQuery, [receiver_id, title, message, transactionId]);
+    await pool.query(notificationQuery, [receiver_id, title, message, transactionId]);
 
     // Delete draft
-    await pool.execute('DELETE FROM drafts WHERE id = ?', [id]);
+    await pool.query('DELETE FROM drafts WHERE id = $1', [id]);
 
     res.json({ message: 'Draft sent as transaction', transactionId });
 };
