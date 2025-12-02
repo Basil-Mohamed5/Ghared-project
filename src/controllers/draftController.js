@@ -1,83 +1,79 @@
+// src/controllers/draftController.js
 import pool from "../config/db.js";
 
-// Get All Drafts for User
 export const getDrafts = async (req, res) => {
     const userId = req.user.id;
-
-    const query = `
-        SELECT id, content, attachments, timestamp
-        FROM drafts
-        WHERE user_id = ?
-        ORDER BY timestamp DESC
-    `;
-    const [rows] = await pool.execute(query, [userId]);
-
-    res.json(rows);
+    const q = `SELECT id, content, attachments, created_at FROM drafts WHERE user_id = $1 ORDER BY created_at DESC`;
+    const result = await pool.query(q, [userId]);
+    res.json(result.rows);
 };
 
-// Delete Draft
-export const deleteDraft = async (req, res) => {
-    const { id } = req.params;
+export const getDraftById = async (req, res) => {
     const userId = req.user.id;
-
-    const query = 'DELETE FROM drafts WHERE id = ? AND user_id = ?';
-    const [result] = await pool.execute(query, [id, userId]);
-
-    if (result.affectedRows === 0) {
-        return res.status(404).json({ error: 'Draft not found' });
-    }
-
-    res.json({ message: 'Draft deleted' });
+    const { id } = req.params;
+    const q = `SELECT id, content, attachments, created_at FROM drafts WHERE id = $1 AND user_id = $2`;
+    const result = await pool.query(q, [id, userId]);
+    if (result.rows.length === 0) return res.status(404).json({ error: "Draft not found" });
+    res.json(result.rows[0]);
 };
 
-// Send Draft (Convert to Transaction)
-export const sendDraft = async (req, res) => {
+export const createDraft = async (req, res) => {
+    const userId = req.user.id;
+    const { content, attachments } = req.body;
+    if (!content) return res.status(400).json({ error: "Content required" });
+
+    const q = `INSERT INTO drafts (user_id, content, attachments, created_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING id`;
+    const result = await pool.query(q, [userId, content, attachments || null]);
+    res.status(201).json({ message: "Draft created", draftId: result.rows[0].id });
+};
+
+export const deleteDraft = async (req, res) => {
+    const userId = req.user.id;
     const { id } = req.params;
-    const userId = 1; // Mock user ID since no auth
+    const q = `DELETE FROM drafts WHERE id = $1 AND user_id = $2 RETURNING id`;
+    const result = await pool.query(q, [id, userId]);
+    if (result.rowCount === 0) return res.status(404).json({ error: "Draft not found" });
+    res.json({ message: "Draft deleted" });
+};
 
-    // Get draft
-    const draftQuery = 'SELECT * FROM drafts WHERE id = $1 AND user_id = $2';
-    const draftResult = await pool.query(draftQuery, [id, userId]);
-    if (draftResult.rows.length === 0) {
-        return res.status(404).json({ error: 'Draft not found' });
-    }
-    const draft = draftResult.rows[0];
+export const sendDraft = async (req, res) => {
+    const userId = req.user.id;
+    const { id } = req.params;
 
-    let transactionData;
-    try {
-        transactionData = JSON.parse(draft.content);
-    } catch (error) {
-        // If not JSON, treat as regular draft content
-        transactionData = { content: draft.content, attachments: draft.attachments };
-    }
+    // 1) get draft
+    const draftRes = await pool.query(`SELECT * FROM drafts WHERE id = $1 AND user_id = $2`, [id, userId]);
+    if (draftRes.rows.length === 0) return res.status(404).json({ error: "Draft not found" });
+    const draft = draftRes.rows[0];
 
-    const { receiver_id, type, content, attachments } = transactionData;
+    // 2) draft.content might be JSON (transaction data) or plain text
+    let transactionData = {};
+    try { transactionData = JSON.parse(draft.content); } catch (e) { transactionData = { content: draft.content, attachments: draft.attachments }; }
 
-    // Validate type if provided
-    if (type && !['normal', 'iqrar'].includes(type)) {
-        return res.status(400).json({ error: 'Invalid transaction type' });
-    }
+    const receiver_id = transactionData.receiver_id || req.body.receiver_id;
+    const type = transactionData.type || req.body.type || "normal";
+    const content = transactionData.content || req.body.content || "";
+    const attachments = transactionData.attachments || draft.attachments || null;
 
-    // Insert transaction
-    const transactionQuery = `
-        INSERT INTO transactions (sender_id, receiver_id, type, content, attachments)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING id
-    `;
-    const transactionResult = await pool.query(transactionQuery, [userId, receiver_id, type || 'normal', content, attachments || null]);
-    const transactionId = transactionResult.rows[0].id;
+    // Validate simple
+    if (!receiver_id) return res.status(400).json({ error: "receiver_id required to send draft" });
+    if (!["normal", "iqrar"].includes(type)) return res.status(400).json({ error: "Invalid type" });
 
-    // Insert notification
-    const notificationQuery = `
-        INSERT INTO notifications (user_id, title, message, transaction_id)
-        VALUES ($1, $2, $3, $4)
-    `;
-    const title = type === 'iqrar' ? 'إقرار جديد' : 'معاملة جديدة';
-    const message = `لديك ${type === 'iqrar' ? 'إقرار' : 'معاملة'} جديدة`;
-    await pool.query(notificationQuery, [receiver_id, title, message, transactionId]);
+    // 3) create transaction
+    const insertTx = `
+    INSERT INTO transactions (sender_id, receiver_id, type, content, attachments, created_at)
+    VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP) RETURNING id
+  `;
+    const txRes = await pool.query(insertTx, [userId, receiver_id, type, content, attachments]);
+    const transactionId = txRes.rows[0].id;
 
-    // Delete draft
-    await pool.query('DELETE FROM drafts WHERE id = $1', [id]);
+    // 4) notifications - simple insert
+    const notifQ = `INSERT INTO notifications (user_id, title, message, transaction_id, created_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)`;
+    const title = type === "iqrar" ? "إقرار جديد" : "معاملة جديدة";
+    const message = type === "iqrar" ? "لديك إقرار جديد" : "لديك معاملة جديدة";
+    await pool.query(notifQ, [receiver_id, title, message, transactionId]);
 
-    res.json({ message: 'Draft sent as transaction', transactionId });
+    // 5) delete draft
+    await pool.query(`DELETE FROM drafts WHERE id = $1`, [id]);
+
+    res.json({ message: "Draft sent as transaction", transactionId });
 };
