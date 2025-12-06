@@ -1,86 +1,25 @@
+// src/models/User.js
 import pool from "../config/db.js";
 import bcrypt from "bcrypt";
 
-// ───────────────────────────────
-// إنشاء مستخدم جديد
-// ───────────────────────────────
-export const createUser = async (name, email, password) => {
+export const createUser = async (name, email, password, role = "user", level = 2, department = null) => {
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const query = `
-        INSERT INTO "User" (full_name, email, password_hash, password)
-        VALUES ($1, $2, $3, $4)
-        RETURNING user_id, full_name, email;
-    `;
-
-    const result = await pool.query(query, [name, email, hashedPassword, password]);
+    INSERT INTO users (name, email, password_hash, role, level, department, created_at)
+    VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP)
+    RETURNING id, name, email, role, level, department
+  `;
+    const result = await pool.query(query, [name, email, hashedPassword, role, level, department]);
     return result.rows[0];
 };
 
-// ───────────────────────────────
-// البحث عن مستخدم بالـ Email
-// ───────────────────────────────
 export const findUserByEmail = async (email) => {
-    const query = `SELECT * FROM "User" WHERE email = $1 LIMIT 1;`;
+    const query = `SELECT * FROM users WHERE email = $1`;
     const result = await pool.query(query, [email]);
     return result.rows[0];
 };
 
-// ───────────────────────────────
-// البحث عن مستخدم بالـ ID
-// ───────────────────────────────
 export const findUserById = async (id) => {
-    const query = `
-        SELECT 
-            user_id, full_name, email, role, created_at 
-        FROM "User"
-        WHERE user_id = $1
-        LIMIT 1;
-    `;
-    const result = await pool.query(query, [id]);
-    return result.rows[0];
-};
-
-// ───────────────────────────────
-// تحديث بيانات مستخدم
-// ───────────────────────────────
-export const updateUser = async (id, fields) => {
-    const allowedFields = ["full_name", "email", "password", "role"];
-    const updates = [];
-    const values = [];
-
-    let i = 1;
-
-    for (const key of Object.keys(fields)) {
-        if (!allowedFields.includes(key)) continue;
-
-        if (key === "password") {
-            fields[key] = await bcrypt.hash(fields[key], 10);
-        }
-
-        updates.push(`${key} = $${i}`);
-        values.push(fields[key]);
-        i++;
-    }
-
-    values.push(id);
-
-    const query = `
-        UPDATE "User"
-        SET ${updates.join(", ")}
-        WHERE user_id = $${i}
-        RETURNING user_id, full_name, email, role, updated_at;
-    `;
-
-    const result = await pool.query(query, values);
-    return result.rows[0];
-};
-
-// ───────────────────────────────
-// حذف مستخدم
-// ───────────────────────────────
-export const deleteUser = async (id) => {
-    const query = `DELETE FROM "User" WHERE user_id = $1 RETURNING user_id;`;
-    const result = await pool.query(query, [id]);
+    const result = await pool.query(`SELECT id, name, email, role, level, department FROM users WHERE id = $1`, [id]);
     return result.rows[0];
 };

@@ -1,15 +1,11 @@
+// src/routes/indexRoutes.js
 import express from "express";
 const router = express.Router();
 
-// ده بس Route تعريفي بسيطة
 router.get("/", (req, res) => {
     res.json({
-        message: "API Root. Available endpoints:",
-        endpoints: [
-            "/api/auth",
-            "/api/transaction",
-            "/api/draft"
-        ]
+        message: "API is running",
+        endpoints: ["/api/auth", "/api/transaction", "/api/draft"]
     });
 });
 

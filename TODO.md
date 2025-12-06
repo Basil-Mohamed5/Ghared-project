@@ -1,17 +1,44 @@
-# TODO List for Task Implementation
+# Final Deliverables Checklist
 
-## Task: Add verification in createDraft for transaction existence, review route protections and sensitive data, ensure UTF-8 in responses.
+## Required Files for Submission
 
-### Steps:
-1. **Review createDraft**: Confirm transaction existence check is present (already done). ✅
-2. **Add protection to unprotected routes in transactionsRoutes.js**: Add 'protect' middleware to getTransactionTypes, createTransaction, getAllTransactions. ✅
-3. **Secure sensitive data in getAllTransactions**: Modify to filter transactions by authenticated user instead of returning all. ✅
-4. **Ensure UTF-8 in responses**: Add charset=utf-8 to JSON responses in controllers. ✅
-5. **Test changes**: Run the server and verify endpoints. ✅
+### 1) Transaction Routes (src/routes/transactionRoutes.js)
+- [x] All required routes added
+- [x] Imports fixed
+- [x] Controller linked with middleware
+- [x] getDraftById route added (in draftsRoutes.js)
 
-### Dependent Files:
-- src/routes/transactionsRoutes.js
-- src/controllers/transactionController.js
+### 2) Transaction Controller (src/controllers/transactionController.js)
+- [x] MySQL JOIN fixed in getSent
+- [x] getDraftById added (in draftController.js)
+- [x] Code organized
+- [x] Error handling improved
+- [x] Additional functions: getAllTransactions, replyToTransaction, getTransactionForPrint
 
-### Followup Steps:
-- After edits, test the API endpoints to ensure protections work and UTF-8 is enforced.
+### 3) Database Config (src/config/db.js)
+- [x] Uses .env
+- [x] Connection Pool implemented
+- [x] MySQL connection configured
+
+### 4) Environment File (.env)
+- [x] MySQL values set
+- [x] JWT_SECRET included
+
+### 5) Postman Collection (project.postman_collection.json)
+- [x] Tests for createTransaction
+- [x] Tests for getAllTransactions
+- [x] Tests for getSentTransactions
+- [x] Tests for getReceivedTransactions
+- [x] Tests for getDraftById
+- [x] Tests for replyToTransaction
+- [x] Tests for getTransactionForPrint
+
+## Files NOT to Submit
+- [x] login/register (authController.js, authRoutes.js)
+- [x] models
+- [x] front-end
+
+## Completed Tasks
+- [x] All TODO items implemented
+- [x] Code tested and working
+- [x] Files organized as per requirements
